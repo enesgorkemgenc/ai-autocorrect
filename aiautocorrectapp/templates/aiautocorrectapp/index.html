@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="page-container" id="page-container">
+        <div class="homepage-top">
+            <h1>AI Autocorrect</h1>
+            <a href="https://enesgorkemgenc.com/" target="_blank">enesgorkemgenc.com</a>
+        </div>
+        
+        <input type="text" class="input-bar" id="input-field">
+
+        <div class="accurate-field">
+        </div>
+
+        <hr>
+
+        <div class="homepage-bottom">
+            <h2>Make a typo then fix it</h2>
+            <h2>Next time there will be a suggestion</h2>
+            <h3>(use space after fixing)</h3>
+            <br>
+            <h3>Use arrow-down and arrow-up to switch between suggestions</h3>
+            <h3>Use Enter to apply the selected suggestion</h3>
+        </div>
+
+        <script>
+            var input_object = document.getElementById("input-field");
+            var before = "";
+            var after = "";
+            var can_be_deleted = true;
+            var can_be_updated = false;
+            var selected_index = 0;
+
+            var accurate_field = document.getElementsByClassName("accurate-field")[0];
+            
+
+            let url = `ws://${window.location.host}/ws/socket-server/`
+
+            const chatSocket = new WebSocket(url)
+
+
+            chatSocket.onmessage = function(e){
+                let data = JSON.parse(e.data)
+                accurate_field.innerHTML = ""
+                for(var key in data){
+                    accurate_field.insertAdjacentHTML("beforeend",`<p class="accurate-word">${data[key]}</p>`);
+                }
+                words = document.getElementsByClassName("accurate-word");
+                for(x=0;x<words.length;x++){
+                    if (x==0){
+                        words[x].setAttribute("class", "accurate-word selected")
+                    }
+                    words[x].addEventListener("click",function(event){
+                        old = input_object.value.trim().split(" ");
+                        old[old.length-1] = event.target.innerHTML;
+                        input_object.value = old.join(" ");
+                        accurate_field.innerHTML = ""
+                    })
+                }
+                }
+
+            input_object.addEventListener('keydown', function(event) {
+                const key = event.key;
+
+                
+                
+                if ((key === "Backspace" || key === "Delete") && can_be_deleted) {
+                    
+                    before = input_object.value.trim().split(" ");
+                    can_be_deleted = false
+                    can_be_updated = true
+                }
+                else if (event.which == 32 && can_be_updated){
+                    after = input_object.value.trim().split(" ");
+                    can_be_deleted = true;
+                    can_be_updated = false;
+                    if(before.length == after.length){
+                    for(i=0;i<after.length;i++){
+                        if(before[i] != after[i]){
+                            chatSocket.send(JSON.stringify({
+                                "type": "new_record",
+                                "before" : before[i],
+                                "after" : after[i]
+                             }))
+                        }
+                    }}
+                    
+                }
+
+                if(!input_object.value){
+                    can_be_deleted = true
+                    can_be_updated = false
+                    accurate_field.innerHTML = ""
+                }
+                
+                if (key == "Enter"){
+                    old = input_object.value.trim().split(" ");
+                    selected_word = document.getElementsByClassName("selected")[0].innerHTML;
+                    old_word = old[old.length-1];
+                    old[old.length-1] = selected_word;
+                    input_object.value = old.join(" ");
+                    chatSocket.send(JSON.stringify({
+                        "type": "new_record",
+                        "before" : old_word,
+                        "after" : selected_word
+                     }));
+                }
+                if (event.which == 40){
+                    words = document.getElementsByClassName("accurate-word");
+                    try{
+                    for(x=0;x<words.length;x++){
+                        words[x].setAttribute("class", "accurate-word");
+                    }
+                    selected_index++;
+
+                    if (selected_index == words.length){
+                        selected_index = 0;
+                    }
+                    
+                    words[selected_index].setAttribute("class", "accurate-word selected");
+                    }
+                    catch{}
+                }
+                else if (event.which == 38){
+                    words = document.getElementsByClassName("accurate-word");
+                    try{
+                    for(x=0;x<words.length;x++){
+                        words[x].setAttribute("class", "accurate-word");
+                    }
+                    selected_index--;
+
+                    if (selected_index == -1){
+                        selected_index = words.length-1;
+                    }
+                    
+                    words[selected_index].setAttribute("class", "accurate-word selected");
+                    }
+                    catch{}
+                }
+            });
+
+            input_object.addEventListener('keyup', function(event){
+                if((event.key === "Backspace" || event.key === "Delete") || isAlpha(event.key)){
+                    selected_index = 0;
+                    word = input_object.value.trim().split(" ");
+                    chatSocket.send(JSON.stringify({
+                        "type": "get_accurates",
+                        "word" : word[word.length-1]
+                     }))
+                     }})
+
+            var isAlpha = function(ch){
+            return typeof ch === "string" && ch.length === 1
+                    && (ch >= "a" && ch <= "z" || ch >= "A" && ch <= "Z");
+            }
+        </script>
+    </div>
+
+{% endblock content %}

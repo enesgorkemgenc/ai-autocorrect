@@ -1,0 +1,97 @@
+html{
+    box-sizing: border-box;
+    font-family: montserrat;
+}
+
+body{
+    background-color: #e4f1fd;
+}
+
+hr{
+    border:1px solid #113052;
+    background-color: #113052;
+    border-radius: 2px;
+}
+
+.page-container{
+    width: 50%;
+    margin: auto;
+    margin-top: 3%;
+}
+
+.homepage-top{
+    width: 100%;
+    margin: auto;
+    text-align: center;
+}
+
+.homepage-top a{
+    text-align: center;
+    color:#113052;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.homepage-top a:hover{
+    color: #5f6974;
+    transition: 0.3s;
+}
+
+h1,h2,h3{
+    color: #113052;
+    font-weight: 400;
+}
+
+.input-bar{
+    width: 70%;
+    height: 48px;
+    border: 2px solid #113052;
+    border-radius: 12px;
+    font-size: x-large;
+    font-family: montserrat;
+    font-weight: 500;
+    margin: 48px auto 0;
+    display: block;
+    color:#113052;
+    padding-left: 6px;
+    outline: none;
+}
+
+
+
+.accurate-field{
+    width: 50%;
+    font-size: x-large;
+    font-family: montserrat;
+    font-weight: 500;
+    display: block;
+    margin: 24px auto;
+    color:#113052;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.accurate-word{
+    border-radius: 6px;
+    padding: 6px;
+    margin: auto 8px;
+}
+
+.accurate-word:hover{
+    cursor: pointer;
+}
+
+.selected{
+    background-color: #11305284;
+    color: white;
+}
+
+
+.homepage-bottom{
+    width: 100%;
+    margin: 32px auto 0;
+    text-align: center;
+}
