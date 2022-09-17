@@ -1,6 +1,5 @@
 # ai-autocorrect
-> AI Autocorrect app that use the collected data from user inputs.
-
+> AI Autocorrect app that utilizes the collected data from user inputs.
 ## Demo GIF
 ![ezgif com-gif-maker](https://user-images.githubusercontent.com/93938698/190847569-ee6a7023-4001-4b81-8f7d-3b4bb702e50c.gif)
 
